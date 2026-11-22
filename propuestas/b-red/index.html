@@ -4,246 +4,617 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kokar — Propuesta B: Red</title>
+<meta name="description" content="Consultoría para entidades públicas y empresas, escuela en línea y editorial.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#EEF1EC; --white:#FFFFFF; --forest:#12302A; --forest-2:#1D4A40;
-  --cobalt:#2F5BFF; --cobalt-2:#DCE4FF; --mint:#9FE2C6; --muted:#55685F; --rule:#D3DAD2;
-  --font:"Schibsted Grotesk",system-ui,sans-serif; --wrap:1220px;
+  --paper:#EEF1EC; --white:#FFFFFF; --forest:#12302A; --forest-2:#1D4A40; --forest-3:#2A5E52;
+  --cobalt:#2F5BFF; --cobalt-d:#1E45E0; --cobalt-2:#DCE4FF; --mint:#9FE2C6; --mint-2:#D6F3E6;
+  --sand:#F6D7A8; --muted:#55685F; --rule:#D3DAD2;
+  --font:"Schibsted Grotesk",system-ui,sans-serif; --wrap:1260px; --ease:cubic-bezier(.2,.7,.2,1);
 }
 *{box-sizing:border-box;margin:0}
-body{background:var(--paper);color:var(--forest);font:400 17px/1.6 var(--font);-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--forest);font:400 17px/1.6 var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body.menu-open{overflow:hidden}
 a{color:inherit;text-decoration:none}
-:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius:6px}
-.wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+img{max-width:100%;display:block}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2.5px solid var(--cobalt);outline-offset:3px;border-radius:8px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding-inline:24px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
-.top{position:sticky;top:0;z-index:20;background:rgba(238,241,236,.88);backdrop-filter:blur(10px)}
-.top .wrap{display:flex;align-items:center;gap:28px;height:76px}
+/* ---------- Header flotante ---------- */
+.top{position:fixed;left:0;right:0;z-index:40;padding:14px 0;transition:padding .35s var(--ease)}
+.top .bar{display:flex;align-items:center;gap:20px;height:64px;padding:0 10px 0 22px;border-radius:999px;background:rgba(255,255,255,.7);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.8);transition:box-shadow .35s,background .35s}
+.top.scrolled{padding:8px 0}
+.top.scrolled .bar{background:rgba(255,255,255,.92);box-shadow:0 14px 40px -18px rgba(18,48,42,.35)}
 .brand{display:flex;align-items:center;gap:10px;font:800 23px/1 var(--font);letter-spacing:-.03em}
-.menu{display:flex;gap:4px;margin-left:auto;font-size:15px;font-weight:500}
-.menu a{padding:8px 14px;border-radius:999px}
-.menu a:hover{background:var(--white)}
-.menu a[aria-current]{background:var(--forest);color:var(--paper)}
+.brand svg circle{transition:transform .5s var(--ease)}
+.brand:hover svg circle:nth-of-type(1){transform:translate(10px,10px)}.brand:hover svg circle:nth-of-type(4){transform:translate(-10px,-10px)}
+.menu{display:flex;align-items:center;gap:2px;margin-left:auto;font-size:15px;font-weight:500}
+.menu>a,.dd>button{padding:9px 14px;border-radius:999px;border:0;background:none;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .2s}
+.menu>a:hover,.dd:hover>button{background:var(--paper)}
+.dd{position:relative}
+.dd>button svg{transition:transform .25s}
+.dd:hover>button svg,.dd:focus-within>button svg{transform:rotate(180deg)}
+.mega{position:absolute;top:calc(100% + 14px);left:50%;width:660px;translate:-50% 8px;opacity:0;visibility:hidden;transition:opacity .25s,translate .25s,visibility .25s;background:var(--white);border-radius:24px;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;box-shadow:0 30px 70px -24px rgba(18,48,42,.35)}
+.dd:hover .mega,.dd:focus-within .mega{opacity:1;visibility:visible;translate:-50% 0}
+.mega .col{background:var(--paper);border-radius:16px;padding:14px}
+.mega h4{font:700 13px/1 var(--font);color:var(--cobalt);margin:4px 8px 10px}
+.mega a{display:block;padding:10px;border-radius:10px;transition:background .2s}
+.mega a:hover{background:var(--white)}
+.mega a b{display:block;font-weight:600;font-size:15px}
+.mega a span{font-size:13px;color:var(--muted)}
 .tools{display:flex;align-items:center;gap:4px}
-.icon-btn{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;border:0;background:none;color:var(--forest);cursor:pointer;position:relative}
-.icon-btn:hover{background:var(--white)}
-.badge{position:absolute;top:5px;right:4px;min-width:17px;height:17px;border-radius:9px;background:var(--cobalt);color:#fff;font:700 11px/17px var(--font);text-align:center}
-.campus{font-size:14px;font-weight:600;padding:10px 18px;border-radius:999px;background:var(--cobalt);color:#fff;margin-left:6px}
-.campus:hover{background:#1E45E0}
+.icon-btn{width:44px;height:44px;display:grid;place-items:center;border-radius:50%;border:0;background:none;cursor:pointer;position:relative;transition:background .2s}
+.icon-btn:hover{background:var(--paper)}
+.badge{position:absolute;top:4px;right:3px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--cobalt);color:#fff;font:700 11px/18px var(--font);text-align:center}
+.campus{font-size:15px;font-weight:600;padding:12px 20px;border-radius:999px;background:var(--forest);color:var(--paper);margin-left:4px;transition:background .2s}
+.campus:hover{background:var(--cobalt)}
 .burger{display:none}
+.search{position:fixed;inset:0 0 auto;z-index:50;background:var(--white);padding:26px 0;translate:0 -100%;transition:translate .35s var(--ease);box-shadow:0 20px 50px -20px rgba(18,48,42,.3)}
+.search.open{translate:0 0}
+.search form{display:flex;gap:12px;align-items:center}
+.search input{flex:1;min-width:0;background:none;border:0;border-bottom:2px solid var(--rule);font:700 28px/1.3 var(--font);letter-spacing:-.02em;padding:10px 0;outline:0;color:var(--forest)}
+.search input:focus{border-color:var(--cobalt)}
 
-.hero{padding:40px 0 96px}
-.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:stretch}
-.hero h1{font:800 clamp(46px,6.2vw,92px)/.98 var(--font);letter-spacing:-.045em;margin-top:40px}
-.hero .lead{font-size:clamp(17px,1.4vw,20px);color:var(--muted);max-width:46ch;margin-top:28px}
-.ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
-.btn{display:inline-flex;align-items:center;font:600 16px/1 var(--font);padding:17px 26px;border-radius:999px;transition:background .2s}
+/* ---------- Hero bento ---------- */
+.hero{padding:120px 0 40px}
+.bento{display:grid;grid-template-columns:1.5fr 1fr .8fr;grid-template-rows:1fr auto;gap:14px;min-height:calc(100svh - 170px)}
+.tile{border-radius:28px;overflow:hidden;position:relative}
+.t-main{grid-row:1/3;background:var(--white);padding:44px 44px 40px;display:flex;flex-direction:column}
+.chip{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;padding:8px 14px 8px 10px;border-radius:999px;background:var(--mint-2);color:var(--forest)}
+.chip i{width:8px;height:8px;border-radius:50%;background:#1E9E6A}
+@media (prefers-reduced-motion:no-preference){.chip i{animation:ping 2.2s infinite}}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(30,158,106,.5)}70%,100%{box-shadow:0 0 0 8px rgba(30,158,106,0)}}
+.hero h1{font:800 clamp(42px,4.7vw,74px)/.97 var(--font);letter-spacing:-.05em;margin-top:28px}
+.hero h1 .hl{color:var(--cobalt)}
+.hero .lead{font-size:clamp(17px,1.35vw,19px);color:var(--muted);max-width:44ch;margin-top:26px}
+.ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:34px}
+.btn{position:relative;display:inline-flex;align-items:center;gap:10px;font:600 16px/1 var(--font);padding:18px 26px;border-radius:999px;border:0;cursor:pointer;overflow:hidden;transition:transform .2s,background .3s,color .3s}
+.btn:active{transform:scale(.97)}
+.btn>*{position:relative}
+.btn .arrow{display:grid;place-items:center;width:28px;height:28px;margin:-6px -12px -6px 0;border-radius:50%;background:rgba(255,255,255,.18);transition:transform .35s var(--ease)}
+.btn:hover .arrow{transform:rotate(-45deg)}
 .btn-primary{background:var(--forest);color:var(--paper)}
-.btn-primary:hover{background:var(--forest-2)}
-.btn-ghost{background:var(--white);color:var(--forest)}
+.btn-primary:hover{background:var(--cobalt)}
+.btn-ghost{background:var(--paper);color:var(--forest)}
 .btn-ghost:hover{background:var(--cobalt-2)}
-.audience{margin-top:40px;font-size:15px;color:var(--muted);max-width:46ch}
-.audience b{color:var(--forest);font-weight:600}
+.t-net{grid-column:2/4;background:var(--forest);min-height:280px}
+.t-net canvas{position:absolute;inset:0;width:100%;height:100%}
+.t-net p{position:absolute;left:26px;top:22px;color:var(--mint);font-size:15px;font-weight:500;max-width:26ch;line-height:1.45}
+.t-net .legend{position:absolute;right:20px;bottom:18px;display:flex;gap:14px;font-size:13px;color:#B9CCC3}
+.t-net .legend span{display:flex;align-items:center;gap:6px}
+.t-net .legend i{width:9px;height:9px;border-radius:50%}
+.t-photo{min-height:230px}
+.t-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1s var(--ease)}
+.t-photo:hover img{transform:scale(1.06)}
+.t-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(18,48,42,.75),transparent 55%)}
+.t-photo span{position:absolute;z-index:1;left:20px;bottom:18px;right:20px;color:#fff;font-weight:600;font-size:15px;line-height:1.35}
+.t-next{background:var(--cobalt);color:#fff;padding:22px;display:flex;flex-direction:column;gap:6px;transition:background .3s}
+.t-next:hover{background:var(--cobalt-d)}
+.t-next small{opacity:.8;font-size:13px}
+.t-next strong{font:700 19px/1.2 var(--font);letter-spacing:-.01em}
+.t-next .date{margin-top:auto;display:flex;align-items:baseline;gap:8px}
+.t-next .date b{font:800 48px/1 var(--font);letter-spacing:-.04em}
+.t-next .date span{font-size:14px;opacity:.85}
+.t-next .go{position:absolute;right:18px;top:18px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;transition:transform .35s var(--ease)}
+.t-next:hover .go{transform:rotate(-45deg)}
 
-.panel{position:relative;border-radius:28px;overflow:hidden;background:var(--forest);min-height:560px}
-#field{position:absolute;inset:0;width:100%;height:100%}
-.next{position:absolute;left:22px;right:22px;bottom:22px;background:var(--white);border-radius:18px;padding:20px 22px;display:grid;grid-template-columns:1fr auto;gap:6px 18px;align-items:center}
-.next small{color:var(--muted);font-size:13px}
-.next strong{font:700 19px/1.25 var(--font);grid-column:1}
-.next .date{grid-row:1/3;grid-column:2;text-align:center;background:var(--cobalt-2);color:var(--cobalt);border-radius:12px;padding:10px 14px;font:700 26px/1 var(--font)}
-.next .date span{display:block;font-size:12px;font-weight:600;margin-top:4px}
-.panel-label{position:absolute;top:22px;left:24px;color:var(--mint);font-size:14px;max-width:24ch;line-height:1.45}
+/* ---------- Logos ---------- */
+.logos{padding:34px 0 10px}
+.logos p{text-align:center;font-size:14px;color:var(--muted);margin-bottom:16px;padding-inline:20px}
+.pill-logo{display:flex;align-items:center;gap:10px;margin-right:12px;padding:14px 22px;border-radius:999px;background:var(--white);font-weight:600;color:#3D544B;white-space:nowrap}
+.pill-logo svg{color:var(--cobalt)}
 
-section.block{padding:100px 0}
-.head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:44px}
-.head h2{font:700 clamp(32px,3.8vw,52px)/1.04 var(--font);letter-spacing:-.035em;max-width:18ch}
-.head a{font-weight:600;color:var(--cobalt);white-space:nowrap}
+/* ---------- Secciones ---------- */
+section.block{padding:110px 0;scroll-margin-top:80px}
+.head{display:flex;justify-content:space-between;align-items:end;gap:28px;margin-bottom:46px}
+.head h2,.h2{font:800 clamp(34px,4.2vw,60px)/1 var(--font);letter-spacing:-.045em;max-width:16ch}
+.head p{color:var(--muted);max-width:42ch}
+.link{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--cobalt);white-space:nowrap}
+.link svg{transition:transform .3s var(--ease)}
+.link:hover svg{transform:translateX(4px)}
 
-.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.pillar{background:var(--white);border-radius:22px;padding:30px;display:flex;flex-direction:column;gap:14px;min-height:300px;transition:background .25s,color .25s}
-.pillar:hover{background:var(--forest);color:var(--paper)}
-.pillar:hover p{color:#B9CCC3}
-.pillar .ico{width:52px;height:52px;border-radius:14px;background:var(--cobalt-2);color:var(--cobalt);display:grid;place-items:center}
-.pillar h3{font:700 28px/1.1 var(--font);letter-spacing:-.02em;margin-top:auto}
-.pillar p{color:var(--muted);font-size:15px}
-.pillar ul{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:6px}
-.pillar li{font-size:13px;border:1px solid var(--rule);border-radius:999px;padding:4px 10px}
+/* Pestañas */
+.seg{position:relative;display:inline-flex;padding:6px;border-radius:999px;background:var(--white);margin-bottom:30px}
+.seg button{position:relative;z-index:1;border:0;background:none;padding:13px 24px;border-radius:999px;font-weight:600;font-size:15px;cursor:pointer;color:var(--muted);transition:color .3s}
+.seg button[aria-selected=true]{color:var(--paper)}
+.tab-ind{position:absolute;top:6px;left:0;height:calc(100% - 12px);border-radius:999px;background:var(--forest);transition:transform .45s var(--ease),width .45s var(--ease)}
+.panel{display:grid;grid-template-columns:1fr 1.2fr;gap:14px}
+.panel .ph{position:relative;border-radius:28px;overflow:hidden;min-height:440px}
+.panel .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.panel.in .ph img{animation:panIn 1.2s var(--ease)}
+@keyframes panIn{from{transform:scale(1.12);opacity:.4}}
+.panel .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(18,48,42,.8),transparent 50%)}
+.panel .ph figcaption{position:absolute;z-index:1;left:26px;right:26px;bottom:24px;color:#fff;font-weight:600;font-size:18px;line-height:1.35;max-width:30ch}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:var(--white);border-radius:24px;padding:26px;display:flex;flex-direction:column;gap:10px;transition:background .3s,color .3s,transform .3s var(--ease)}
+.card:hover{background:var(--forest);color:var(--paper);transform:translateY(-4px)}
+.card:hover p{color:#B9CCC3}
+.card .ico{width:50px;height:50px;border-radius:15px;background:var(--cobalt-2);color:var(--cobalt);display:grid;place-items:center;transition:background .3s,color .3s}
+.card:hover .ico{background:var(--mint);color:var(--forest)}
+.card h3{font:700 20px/1.2 var(--font);letter-spacing:-.02em;margin-top:auto;padding-top:20px}
+.card p{color:var(--muted);font-size:15px;transition:color .3s}
 
-.proof{background:var(--forest);color:var(--paper)}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
-.stat strong{display:block;font:800 64px/1 var(--font);letter-spacing:-.04em;color:var(--mint)}
+/* Cifras */
+.proof{position:relative;overflow:hidden;background:var(--forest);color:var(--paper);border-radius:40px;margin-inline:14px}
+.proof canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+.stats{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.stat strong{display:block;font:800 clamp(52px,5.6vw,84px)/1 var(--font);letter-spacing:-.05em;color:var(--mint);font-variant-numeric:tabular-nums}
 .stat span{display:block;color:#B9CCC3;font-size:15px;margin-top:12px;max-width:22ch}
-.clients{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:64px}
-.clients span{border:1px solid var(--forest-2);border-radius:14px;padding:22px 10px;text-align:center;color:#8FB0A4;font-weight:600;font-size:15px}
+.proof .note{position:relative;margin-top:56px;padding-top:28px;border-top:1px solid var(--forest-3);display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;color:#B9CCC3;font-size:15px}
 
-.shelf{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
-.item{background:var(--white);border-radius:20px;padding:14px 14px 20px}
-.cover{aspect-ratio:4/5;border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;position:relative}
-.cover b{font:800 23px/1.05 var(--font);letter-spacing:-.03em}
-.cover small{font-size:12px;font-weight:600}
-.k1{background:var(--cobalt);color:#fff}.k2{background:var(--mint);color:var(--forest)}
-.k3{background:var(--forest);color:var(--paper)}.k4{background:#F6D7A8;color:#4A2E07}
-.item .kind{font-size:13px;color:var(--muted);margin:14px 4px 0}
-.item h3{font:600 17px/1.3 var(--font);margin:4px 4px 0}
-.item .row{display:flex;justify-content:space-between;align-items:center;margin:14px 4px 0}
-.item .price{font-weight:700}
-.add{font-size:14px;font-weight:600;color:var(--cobalt)}
+/* Método */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:s}
+.step{position:relative;background:var(--white);border-radius:24px;padding:26px 24px 28px;overflow:hidden}
+.step .n{display:flex;align-items:center;justify-content:space-between;font:800 15px/1 var(--font);color:var(--cobalt)}
+.step .n i{flex:1;height:3px;margin-left:14px;border-radius:2px;background:var(--cobalt-2);position:relative;overflow:hidden}
+.step .n i::after{content:"";position:absolute;inset:0;background:var(--cobalt);transform:scaleX(0);transform-origin:left;transition:transform 1s var(--ease);transition-delay:calc(var(--d,0s) + .4s)}
+.step.in .n i::after{transform:none}
+.step h3{font:700 22px/1.15 var(--font);letter-spacing:-.02em;margin:46px 0 10px}
+.step p{color:var(--muted);font-size:15px}
 
-.cta{background:var(--cobalt);color:#fff;border-radius:28px;padding:64px 56px;display:grid;grid-template-columns:1.3fr 1fr;gap:32px;align-items:center}
-.cta h2{font:800 clamp(32px,3.8vw,52px)/1.02 var(--font);letter-spacing:-.035em}
-.cta p{opacity:.85;margin-top:12px}
-.cta .ctas{justify-content:flex-end;margin:0}
+/* Escuela */
+.c-btns{display:flex;gap:8px}
+.c-btns button{width:52px;height:52px;border-radius:50%;border:0;background:var(--white);cursor:pointer;display:grid;place-items:center;transition:background .2s,color .2s}
+.c-btns button:hover{background:var(--forest);color:var(--paper)}
+.carousel .track{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 42px)/4);gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 0 10px}
+.carousel .track::-webkit-scrollbar{display:none}
+.course{scroll-snap-align:start;background:var(--white);border-radius:24px;padding:10px;display:flex;flex-direction:column;transition:transform .35s var(--ease),box-shadow .35s,opacity .9s var(--ease)}
+.course:hover{transform:translateY(-6px);box-shadow:0 26px 50px -26px rgba(18,48,42,.4)}
+.course .img{position:relative;aspect-ratio:4/3;border-radius:16px;overflow:hidden}
+.course .img img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+.course:hover .img img{transform:scale(1.07)}
+.tag{position:absolute;left:10px;top:10px;font-size:12.5px;font-weight:600;padding:6px 11px;border-radius:999px;background:var(--white);color:var(--forest)}
+.tag.live{background:var(--mint)}
+.course .body{padding:16px 10px 10px;display:flex;flex-direction:column;gap:6px;flex:1}
+.course .when{font-size:13px;color:var(--cobalt);font-weight:600}
+.course h3{font:700 18px/1.25 var(--font);letter-spacing:-.01em}
+.course .who{font-size:14px;color:var(--muted)}
+.course .foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:14px}
+.course .price{font:800 22px/1 var(--font);letter-spacing:-.02em}
+.course .price s{font-weight:400;font-size:14px;color:var(--muted);margin-left:6px}
+.course .foot a{padding:10px 16px;border-radius:999px;background:var(--paper);font-weight:600;font-size:14px;transition:background .2s,color .2s}
+.course .foot a:hover{background:var(--cobalt);color:#fff}
+
+/* Editorial */
+.edit-band{background:var(--mint-2);border-radius:40px;margin-inline:14px}
+.editorial{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:center}
+.editorial .ph{position:relative;border-radius:28px;overflow:hidden;aspect-ratio:4/5}
+.editorial .ph img{width:100%;height:100%;object-fit:cover}
+.editorial .ph .stamp{position:absolute;right:18px;top:18px;width:110px;height:110px;border-radius:50%;background:var(--sand);color:#4A2E07;display:grid;place-items:center;text-align:center;font:800 15px/1.1 var(--font);letter-spacing:-.01em}
+@media (prefers-reduced-motion:no-preference){.editorial .ph .stamp{animation:float 5s ease-in-out infinite}}
+@keyframes float{50%{transform:translateY(-8px) rotate(-6deg)}}
+.books{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:32px}
+.book{background:var(--white);border-radius:22px;padding:10px 10px 16px;transition:transform .35s var(--ease),box-shadow .35s,opacity .9s var(--ease)}
+.book:hover{transform:translateY(-6px) rotate(-1deg);box-shadow:0 26px 50px -26px rgba(18,48,42,.4)}
+.cv{aspect-ratio:3/4;border-radius:14px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;position:relative}
+.cv small{font-size:12px;font-weight:600}
+.cv b{font:800 22px/1 var(--font);letter-spacing:-.04em}
+.cv svg{position:absolute;right:-18px;bottom:-18px;opacity:.35}
+.k1{background:var(--cobalt);color:#fff}.k2{background:var(--forest);color:var(--mint)}.k3{background:var(--sand);color:#4A2E07}
+.book h3{font:600 15px/1.3 var(--font);margin:12px 4px 0}
+.book .row{display:flex;justify-content:space-between;align-items:center;margin:10px 4px 0}
+.book .row span{font-weight:800}
+.book .row button{border:0;border-radius:999px;padding:8px 14px;background:var(--paper);font-weight:600;font-size:14px;cursor:pointer;transition:background .2s,color .2s}
+.book .row button:hover{background:var(--cobalt);color:#fff}
+
+/* Testimonios */
+.testi{display:grid;grid-template-columns:.8fr 1.2fr;gap:14px}
+.testi .intro{background:var(--white);border-radius:28px;padding:40px;display:flex;flex-direction:column;justify-content:space-between;gap:24px}
+.score{display:flex;align-items:baseline;gap:10px}
+.score b{font:800 64px/1 var(--font);letter-spacing:-.05em;color:var(--cobalt)}
+.score span{color:var(--muted);font-size:15px}
+.stars{display:flex;gap:4px;color:#F2A93B}
+.rot{background:var(--cobalt);color:#fff;border-radius:28px;padding:48px 48px 36px;position:relative;overflow:hidden}
+.rot>svg{position:absolute;right:30px;top:26px;opacity:.2}
+.quotes{display:grid}
+.quote{grid-area:1/1;margin:0;opacity:0;transform:translateY(14px);transition:opacity .7s var(--ease),transform .7s var(--ease);pointer-events:none}
+.quote.on{opacity:1;transform:none;pointer-events:auto}
+.quote p{font:600 clamp(22px,2.3vw,32px)/1.25 var(--font);letter-spacing:-.025em;max-width:30ch}
+.quote footer{display:flex;align-items:center;gap:14px;margin-top:28px}
+.av{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:var(--forest);flex:none}
+.quote footer b{display:block;font-weight:700}
+.quote footer span{font-size:14px;opacity:.8}
+.dots{display:flex;gap:8px;margin-top:32px}
+.dots button{width:10px;height:10px;border-radius:5px;border:0;background:rgba(255,255,255,.35);cursor:pointer;transition:width .3s,background .3s}
+.dots button[aria-current=true]{width:34px;background:#fff}
+
+/* Publicaciones */
+.posts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.post{background:var(--white);border-radius:24px;padding:10px 10px 22px;transition:transform .35s var(--ease),opacity .9s var(--ease)}
+.post:hover{transform:translateY(-6px)}
+.post .img{aspect-ratio:16/11;border-radius:16px;overflow:hidden}
+.post .img img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+.post:hover .img img{transform:scale(1.06)}
+.post .meta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:var(--muted);margin:16px 8px 0}
+.post .meta b{color:var(--cobalt)}
+.post h3{font:700 21px/1.2 var(--font);letter-spacing:-.02em;margin:8px 8px 0}
+
+/* CTA */
+.cta{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
+.cta .box{background:var(--cobalt);color:#fff;border-radius:32px;padding:64px 56px}
+.cta h2{font:800 clamp(36px,4.4vw,64px)/.98 var(--font);letter-spacing:-.05em;max-width:14ch}
+.cta p{opacity:.85;margin-top:16px;max-width:42ch}
 .cta .btn-primary{background:#fff;color:var(--cobalt)}
-.cta .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.5);color:#fff}
+.cta .btn-primary:hover{background:var(--forest);color:#fff}
+.cta .btn-primary .arrow{background:var(--cobalt-2)}
+.cta .btn-ghost{background:rgba(255,255,255,.14);color:#fff}
+.cta .btn-ghost:hover{background:rgba(255,255,255,.26)}
+.news{display:flex;gap:8px;margin-top:36px;padding:6px;border-radius:999px;background:rgba(255,255,255,.14);max-width:520px}
+.news input{flex:1;min-width:0;padding:12px 16px;border:0;background:none;color:#fff;font:inherit;outline:0}
+.news input::placeholder{color:rgba(255,255,255,.7)}
+.news button{border:0;border-radius:999px;padding:12px 20px;background:#fff;color:var(--cobalt);font-weight:700;cursor:pointer}
+.cta .side{position:relative;border-radius:32px;overflow:hidden;min-height:360px}
+.cta .side img{position:absolute;inset:-8% 0;width:100%;height:116%;object-fit:cover}
+.cta .side .card-mini{position:absolute;left:18px;right:18px;bottom:18px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:14px}
+.cta .side .card-mini b{display:block;font-size:15px}
+.cta .side .card-mini span{font-size:13px;color:var(--muted)}
+.pulse{width:12px;height:12px;border-radius:50%;background:#1E9E6A;flex:none}
+@media (prefers-reduced-motion:no-preference){.pulse{animation:ping 2s infinite}}
 
-footer{padding:56px 0 32px;color:var(--muted);font-size:14px;border-top:1px solid var(--rule)}
-.mock-note{margin-top:20px;padding:12px 16px;border-radius:12px;background:var(--white);color:var(--forest);font-weight:600}
+/* Footer */
+footer.site{background:var(--forest);color:#B9CCC3;margin:110px 14px 14px;border-radius:40px;padding:72px 0 28px;font-size:15px}
+.fgrid{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:36px}
+.fgrid .brand{color:var(--paper)}
+.fgrid h4{color:var(--paper);font:700 15px/1 var(--font);margin-bottom:18px}
+.fgrid ul{list-style:none;padding:0;display:grid;gap:11px}
+.fgrid a:hover{color:var(--mint)}
+.social{display:flex;gap:8px;margin-top:22px}
+.social a{width:42px;height:42px;border-radius:50%;background:var(--forest-2);display:grid;place-items:center;color:var(--paper);transition:background .2s,color .2s}
+.social a:hover{background:var(--mint);color:var(--forest)}
+.legal{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;border-top:1px solid var(--forest-3);margin-top:52px;padding-top:24px;font-size:14px}
+.legal span:last-child{display:flex;flex-wrap:wrap;gap:6px 18px}
+.mock-note{margin-top:20px;padding:14px 18px;border-radius:14px;background:var(--forest-2);color:var(--mint);font-weight:600;text-align:center}
 
-.wa{position:fixed;right:22px;bottom:22px;z-index:30;display:flex;align-items:center;gap:10px;background:#25D366;color:#073B1E;font-weight:700;font-size:15px;padding:12px 18px 12px 14px;border-radius:999px;box-shadow:0 10px 26px rgba(18,48,42,.25)}
+/* WhatsApp */
+.wa{position:fixed;right:22px;bottom:22px;z-index:45;display:flex;align-items:center;gap:10px;background:#25D366;color:#073B1E;font-weight:700;font-size:15px;padding:12px 20px 12px 14px;border-radius:999px;box-shadow:0 14px 32px -8px rgba(18,48,42,.45);transition:transform .25s,box-shadow .25s}
+.wa:hover{transform:translateY(-3px);box-shadow:0 20px 40px -10px rgba(18,48,42,.5)}
+.wa .ic{position:relative;display:grid;place-items:center}
+.wa .ic::after{content:"";position:absolute;top:-2px;right:-3px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #25D366}
 
-@media (prefers-reduced-motion:no-preference){
-  .hero h1,.hero .lead,.hero .ctas,.audience{opacity:0;transform:translateY(16px);animation:rise .8s cubic-bezier(.2,.7,.2,1) forwards}
-  .hero .lead{animation-delay:.12s}.hero .ctas{animation-delay:.24s}.audience{animation-delay:.36s}
-  .next{opacity:0;transform:translateY(20px);animation:rise .8s .6s cubic-bezier(.2,.7,.2,1) forwards}
-}
-@keyframes rise{to{opacity:1;transform:none}}
-
-@media (max-width:980px){
+/* ---------- Responsive ---------- */
+@media (max-width:1100px){
   .menu{display:none}.campus{display:none}.burger{display:grid}.tools{margin-left:auto}
-  .menu.open{display:flex;flex-direction:column;position:absolute;top:76px;left:0;right:0;background:var(--paper);padding:12px 18px 22px;font-size:18px;border-bottom:1px solid var(--rule)}
-  .hero .wrap{grid-template-columns:1fr}
-  .hero h1{margin-top:12px}
-  .panel{min-height:420px}
-  .pillars{grid-template-columns:1fr}.pillar{min-height:0}
-  .stats{grid-template-columns:1fr 1fr;row-gap:40px}
-  .clients{grid-template-columns:1fr 1fr}
-  .shelf{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-  .cta{grid-template-columns:1fr;padding:44px 26px}.cta .ctas{justify-content:flex-start}
-  .head{flex-direction:column;align-items:flex-start}
-  section.block{padding:72px 0}
-  .wa span{display:none}.wa{padding:14px}
+  .menu.open{display:flex;flex-direction:column;align-items:stretch;position:fixed;top:96px;left:14px;right:14px;max-height:calc(100svh - 110px);overflow:auto;background:var(--white);border-radius:28px;padding:14px;gap:2px;font-size:19px;box-shadow:0 30px 70px -20px rgba(18,48,42,.4)}
+  .menu.open>a,.menu.open .dd>button{padding:14px 16px;width:100%;border-radius:16px}
+  .menu.open .mega{position:static;width:auto;translate:none;opacity:1;visibility:visible;grid-template-columns:1fr;box-shadow:none;padding:4px 0 8px}
+  .bento{grid-template-columns:1fr 1fr}
+  .t-main{grid-column:1/-1;grid-row:auto}
+  .t-net{grid-column:1/-1}
+  .panel{grid-template-columns:1fr}.panel .ph{min-height:320px}
+  .stats{grid-template-columns:1fr 1fr;row-gap:44px}
+  .steps{grid-template-columns:1fr 1fr}
+  .carousel .track{grid-auto-columns:calc((100% - 14px)/2)}
+  .editorial,.testi,.cta{grid-template-columns:1fr}
+  .editorial .ph{aspect-ratio:16/10}
+  .posts{grid-template-columns:1fr 1fr}
+  .fgrid{grid-template-columns:1fr 1fr 1fr}.fgrid>div:first-child{grid-column:1/-1}
+}
+@media (max-width:720px){
+  .top .bar{padding-left:16px}
+  .hero{padding-top:104px}
+  .t-main{padding:34px 24px 28px}
+  .bento{grid-template-columns:1fr}
+  .t-net{min-height:280px}.t-net .legend{display:none}
+  .t-photo{min-height:220px}
+  section.block{padding:80px 0}
+  .head{flex-direction:column;align-items:flex-start;margin-bottom:32px}
+  .seg{display:flex}.seg button{flex:1;padding:12px 8px;font-size:14px}
+  .cards{grid-template-columns:1fr}
+  .proof,.edit-band{border-radius:28px;margin-inline:8px}
+  .steps{grid-template-columns:1fr}.step h3{margin-top:28px}
+  .carousel .track{grid-auto-columns:84%}
+  .books{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.cv{padding:10px}.cv b{font-size:15px}.book .row{flex-direction:column;align-items:flex-start;gap:6px}
+  .testi .intro,.rot{padding:30px 24px}
+  .posts{grid-template-columns:1fr}
+  .cta .box{padding:44px 26px}.news{flex-direction:column;border-radius:22px}
+  footer.site{margin-inline:8px;border-radius:28px}
+  .fgrid{grid-template-columns:1fr 1fr}
+  .wa span{display:none}.wa{padding:16px}
 }
 </style>
 </head>
 <body>
-<div style="background:#FFF6D6;color:#3A2E05;font:500 14px/1.4 system-ui,sans-serif;text-align:center;padding:9px 16px">Estás viendo la propuesta B de 2. <a href="../a-territorio/" style="color:inherit;font-weight:700;text-decoration:underline">Ver la propuesta A</a> o <a href="../../" style="color:inherit;font-weight:700;text-decoration:underline">volver a elegir</a></div>
+<div style="position:relative;z-index:41;background:#FFF6D6;color:#3A2E05;font:500 14px/1.4 system-ui,sans-serif;text-align:center;padding:9px 16px">Estás viendo la propuesta B de 2. <a href="../a-territorio/" style="color:inherit;font-weight:700;text-decoration:underline">Ver la propuesta A</a> o <a href="../../" style="color:inherit;font-weight:700;text-decoration:underline">volver a elegir</a></div>
+
+<div class="search" id="search" role="dialog" aria-label="Buscar en el sitio">
+  <form class="wrap" onsubmit="event.preventDefault()">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2F5BFF" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    <label class="sr" for="q">Buscar</label>
+    <input id="q" type="search" placeholder="Busca cursos, libros o servicios">
+    <button type="button" class="icon-btn" aria-label="Cerrar búsqueda" onclick="document.getElementById('search').classList.remove('open')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </form>
+</div>
 
 <header class="top">
-  <div class="wrap">
+  <div class="wrap"><div class="bar">
     <a class="brand" href="#">
-      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#12302A"/><circle cx="10" cy="10" r="3" fill="#9FE2C6"/><circle cx="20" cy="20" r="3" fill="#2F5BFF"/><circle cx="20" cy="10" r="3" fill="#fff"/><circle cx="10" cy="20" r="3" fill="#fff"/></svg>
+      <svg width="32" height="32" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#12302A"/><circle cx="10" cy="10" r="3" fill="#9FE2C6"/><circle cx="20" cy="10" r="3" fill="#fff"/><circle cx="10" cy="20" r="3" fill="#fff"/><circle cx="20" cy="20" r="3" fill="#2F5BFF"/></svg>
       kokar
     </a>
     <nav class="menu" id="menu" aria-label="Principal">
-      <a href="#">Nosotros</a><a href="#">Consultoría</a><a href="#">Escuela</a><a href="#">Librería</a><a href="#">Publicaciones</a><a href="#">Contacto</a>
+      <a href="#">Nosotros</a>
+      <div class="dd">
+        <button type="button" aria-haspopup="true">Consultoría <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m3 4.5 3 3 3-3"/></svg></button>
+        <div class="mega">
+          <div class="col"><h4>Entidades públicas</h4>
+            <a href="#consultoria"><b>Gestión por resultados</b><span>Planes, indicadores y tableros</span></a>
+            <a href="#consultoria"><b>Prospectiva y escenarios</b><span>Decisiones con visión de futuro</span></a>
+            <a href="#consultoria"><b>Comunicación institucional</b><span>Mensajes claros para la ciudadanía</span></a></div>
+          <div class="col"><h4>Empresas privadas</h4>
+            <a href="#consultoria"><b>Gobierno corporativo</b><span>Directorios y cumplimiento</span></a>
+            <a href="#consultoria"><b>Relación con el Estado</b><span>Contrataciones y asuntos públicos</span></a>
+            <a href="#consultoria"><b>Gestión de riesgos</b><span>Mapas de riesgo y continuidad</span></a></div>
+        </div>
+      </div>
+      <a href="#escuela">Escuela</a><a href="#editorial">Librería</a><a href="#publicaciones">Publicaciones</a><a href="#contacto">Contacto</a>
     </nav>
     <div class="tools">
-      <button class="icon-btn" aria-label="Buscar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
-      <a class="icon-btn" href="#" aria-label="Carrito, 2 productos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 7h14l-1.5 12h-11z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="badge">2</span></a>
+      <button class="icon-btn" aria-label="Buscar" onclick="document.getElementById('search').classList.add('open');setTimeout(()=>document.getElementById('q').focus(),300)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+      <a class="icon-btn" href="#editorial" aria-label="Carrito"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 7h14l-1.5 12h-11z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="badge">0</span></a>
       <a class="campus" href="#">Campus</a>
-      <button class="icon-btn burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu" onclick="const m=document.getElementById('menu');m.classList.toggle('open');this.setAttribute('aria-expanded',m.classList.contains('open'))"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <button class="icon-btn burger" data-burger aria-label="Abrir menú" aria-expanded="false" aria-controls="menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     </div>
-  </div>
+  </div></div>
 </header>
 
 <main>
-<section class="hero">
-  <div class="wrap">
-    <div>
-      <h1>Conectamos a quienes deciden con lo que funciona</h1>
-      <p class="lead">Consultoría para entidades públicas y empresas, una escuela en línea para formar equipos y una editorial con guías que se usan en el trabajo diario.</p>
-      <div class="ctas"><a class="btn btn-primary" href="#">Agenda una reunión</a><a class="btn btn-ghost" href="#">Explorar cursos</a></div>
-      <p class="audience">Trabajamos con <b>gobiernos regionales</b>, <b>municipalidades</b>, <b>ministerios</b> y <b>empresas privadas</b>.</p>
+<section class="hero" data-hero>
+  <div class="wrap bento">
+    <div class="tile t-main">
+      <span class="chip" data-reveal><i></i>Inscripciones abiertas para enero</span>
+      <h1>
+        <span class="line-mask"><span style="--d:.05s">Conectamos</span></span>
+        <span class="line-mask"><span style="--d:.15s">a quienes deciden</span></span>
+        <span class="line-mask"><span style="--d:.25s">con lo que <span class="hl">funciona</span></span></span>
+      </h1>
+      <p class="lead" data-reveal style="--d:.4s">Consultoría para entidades públicas y empresas, una escuela en línea para formar equipos y una editorial con guías que se usan en el trabajo diario.</p>
+      <div class="ctas" data-reveal style="--d:.55s">
+        <a class="btn btn-primary" href="#contacto"><span>Agenda una reunión</span><span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14m-5-5 5 5-5 5"/></svg></span></a>
+        <a class="btn btn-ghost" href="#escuela"><span>Explorar cursos</span></a>
+      </div>
     </div>
-    <div class="panel">
+    <div class="tile t-net" data-reveal="zoom" style="--d:.2s">
       <canvas id="field" aria-hidden="true"></canvas>
-      <p class="panel-label">Una red de 240 proyectos entre lo público y lo privado</p>
-      <a class="next" href="#"><small>Próximo inicio en la escuela</small><strong>Diplomado en gestión pública por resultados</strong><small>8 semanas en línea, con certificado</small><span class="date">14<span>ene</span></span></a>
+      <p>Una red de 240 proyectos que conecta lo público con lo privado</p>
+      <div class="legend" aria-hidden="true"><span><i style="background:#2F5BFF"></i>Sector público</span><span><i style="background:#9FE2C6"></i>Sector privado</span></div>
     </div>
+    <figure class="tile t-photo" data-reveal="zoom" style="--d:.35s"><img src="https://images.unsplash.com/photo-1483600516620-7254872369ae?auto=format&fit=crop&w=900&q=70" alt="Columnas de piedra vistas desde abajo"><span>Trabajamos con gobiernos en 14 regiones del Perú</span></figure>
+    <a class="tile t-next" href="#escuela" data-reveal="zoom" style="--d:.5s">
+      <small>Próximo inicio</small>
+      <strong>Diplomado en gestión pública por resultados</strong>
+      <span class="go" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14m-5-5 5 5-5 5"/></svg></span>
+      <div class="date"><b>14</b><span>de enero, 8 semanas</span></div>
+    </a>
   </div>
 </section>
 
-<section class="block" style="padding-top:20px">
+<div class="logos">
+  <p>Instituciones y empresas que confían en nosotros (logos de ejemplo)</p>
+  <div class="marquee" style="--mq:46s"><div class="marquee-track">
+    <span class="pill-logo"><svg width="20" height="20" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 2 24 13 13 24 2 13z"/></svg>Municipalidad Ejemplo</span>
+    <span class="pill-logo"><svg width="20" height="20" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 3 24 22H2z"/></svg>Gobierno Regional Sur</span>
+    <span class="pill-logo"><svg width="20" height="20" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="13" cy="13" r="10"/><circle cx="13" cy="13" r="4"/></svg>Andes Energía</span>
+    <span class="pill-logo"><svg width="20" height="20" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="20" height="20" rx="5"/><path d="M8 13h10"/></svg>Banco Modelo</span>
+    <span class="pill-logo"><svg width="20" height="20" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 22h20M5 22V10m5 12V10m6 12V10m5 12V10M2 9l11-6 11 6z"/></svg>Ministerio Ficticio</span>
+    <span class="pill-logo"><svg width="20" height="20" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 18c4-8 14-8 18 0M8 18c2-4 8-4 10 0"/></svg>Puerto del Pacífico</span>
+    <span class="pill-logo" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 2 24 13 13 24 2 13z"/></svg>Municipalidad Ejemplo</span>
+    <span class="pill-logo" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 3 24 22H2z"/></svg>Gobierno Regional Sur</span>
+    <span class="pill-logo" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="13" cy="13" r="10"/><circle cx="13" cy="13" r="4"/></svg>Andes Energía</span>
+    <span class="pill-logo" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="20" height="20" rx="5"/><path d="M8 13h10"/></svg>Banco Modelo</span>
+    <span class="pill-logo" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 22h20M5 22V10m5 12V10m6 12V10m5 12V10M2 9l11-6 11 6z"/></svg>Ministerio Ficticio</span>
+    <span class="pill-logo" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 18c4-8 14-8 18 0M8 18c2-4 8-4 10 0"/></svg>Puerto del Pacífico</span>
+  </div></div>
+</div>
+
+<section class="block" id="consultoria">
   <div class="wrap">
-    <div class="head"><h2>Tres formas de trabajar con nosotros</h2><a href="#">Ver todo</a></div>
-    <div class="pillars">
-      <a class="pillar" href="#"><span class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10m4.7 11V10m4.6 11V10M19 21V10M2.5 9 12 3l9.5 6z"/></svg></span><h3>Consultoría</h3><p>Diagnósticos, planes y acompañamiento para entidades públicas y empresas privadas.</p><ul><li>Gestión pública</li><li>Gobierno corporativo</li><li>Prospectiva</li></ul></a>
-      <a class="pillar" href="#"><span class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5"/></svg></span><h3>Escuela</h3><p>Cursos y diplomados en línea, con docentes que trabajan en el sector.</p><ul><li>Diplomados</li><li>Cursos cortos</li><li>In house</li></ul></a>
-      <a class="pillar" href="#"><span class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4zM20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z"/></svg></span><h3>Editorial</h3><p>Libros y guías prácticas, en impreso y digital, con envío a todo el país.</p><ul><li>Libros</li><li>Guías</li><li>Ebooks</li></ul></a>
+    <div class="head"><h2 data-reveal>Consultoría para cada sector</h2><p data-reveal style="--d:.1s">Dos equipos especializados con un mismo método. Elige tu sector para ver qué hacemos.</p></div>
+    <div data-tabs>
+      <div class="seg" role="tablist" aria-label="Sector" data-reveal>
+        <span class="tab-ind" aria-hidden="true"></span>
+        <button role="tab" id="t-pub" aria-controls="p-pub">Entidades públicas</button>
+        <button role="tab" id="t-priv" aria-controls="p-priv">Empresas privadas</button>
+      </div>
+      <div class="panel" role="tabpanel" id="p-pub" aria-labelledby="t-pub">
+        <figure class="ph"><img src="https://images.unsplash.com/photo-1768617154318-b2caa1e97a60?auto=format&fit=crop&w=1100&q=70" alt="Fachada de un edificio neoclásico con columnas" loading="lazy"><figcaption>Gobiernos regionales, municipalidades y ministerios.</figcaption></figure>
+        <div class="cards">
+          <a class="card" href="#"><span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10m4.7 11V10m4.6 11V10M19 21V10M2.5 9 12 3l9.5 6z"/></svg></span><h3>Gestión pública por resultados</h3><p>Planes, indicadores y tableros de seguimiento.</p></a>
+          <a class="card" href="#"><span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg></span><h3>Prospectiva y escenarios</h3><p>Talleres de futuro para decisiones de alto impacto.</p></a>
+          <a class="card" href="#"><span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8"/></svg></span><h3>Comunicación institucional</h3><p>Mensajes y voceros que la ciudadanía entiende.</p></a>
+          <a class="card" href="#"><span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5"/></svg></span><h3>Formación de equipos</h3><p>Programas in house con certificado.</p></a>
+        </div>
+      </div>
+      <div class="panel" role="tabpanel" id="p-priv" aria-labelledby="t-priv" hidden>
+        <figure class="ph"><img src="https://images.unsplash.com/photo-1576731753569-3e93a228048c?auto=format&fit=crop&w=1100&q=70" alt="Esquina de un edificio de oficinas de vidrio contra el cielo" loading="lazy"><figcaption>Energía, banca, infraestructura y servicios.</figcaption></figure>
+        <div class="cards">
+          <a class="card" href="#"><span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 5V3h8v2M8 11h8M8 15h5"/></svg></span><h3>Gobierno corporativo</h3><p>Directorios, políticas internas e integridad.</p></a>
+          <a class="card" href="#"><span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12h10M12 7v10"/><circle cx="12" cy="12" r="9"/></svg></span><h3>Relación con el Estado</h3><p>Contrataciones públicas y asuntos regulatorios.</p></a>
+          <a class="card" href="#"><span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 22 20H2z"/><path d="M12 10v4m0 3v.5"/></svg></span><h3>Gestión de riesgos</h3><p>Riesgo social, político y operativo de tus proyectos.</p></a>
+          <a class="card" href="#"><span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></span><h3>Estrategia y crecimiento</h3><p>Expansión a nuevas regiones del país.</p></a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <section class="block proof">
+  <canvas id="field2" aria-hidden="true"></canvas>
   <div class="wrap">
-    <div class="stats">
-      <div class="stat"><strong>18</strong><span>años con el sector público y privado</span></div>
-      <div class="stat"><strong>240+</strong><span>proyectos de consultoría entregados</span></div>
-      <div class="stat"><strong>9 500</strong><span>estudiantes formados en la escuela</span></div>
-      <div class="stat"><strong>12</strong><span>títulos publicados por la editorial</span></div>
+    <div class="stats" data-stagger=".1">
+      <div class="stat"><strong data-count="18">18</strong><span>años con el sector público y privado</span></div>
+      <div class="stat"><strong data-count="240" data-suffix="+">240+</strong><span>proyectos de consultoría entregados</span></div>
+      <div class="stat"><strong data-count="9500">9 500</strong><span>estudiantes formados en la escuela</span></div>
+      <div class="stat"><strong data-count="12">12</strong><span>títulos publicados por la editorial</span></div>
     </div>
-    <div class="clients" aria-label="Clientes (logos de ejemplo)"><span>Municipalidad Ejemplo</span><span>Gob. Regional Sur</span><span>Andes Energía</span><span>Banco Modelo</span><span>Ministerio Ficticio</span></div>
+    <div class="note" data-reveal><span>Presencia en 14 regiones del Perú y proyectos en 3 países de la región.</span><a class="link" href="#" style="color:var(--mint)">Ver casos de éxito <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14m-5-5 5 5-5 5"/></svg></a></div>
   </div>
 </section>
 
 <section class="block">
   <div class="wrap">
-    <div class="head"><h2>Cursos y libros destacados</h2><a href="#">Ir a la tienda</a></div>
-    <div class="shelf">
-      <div class="item"><div class="cover k1"><small>Diplomado</small><b>Gestión pública por resultados</b></div><p class="kind">Curso, 8 semanas</p><h3>Diplomado en gestión pública por resultados</h3><div class="row"><span class="price">S/ 890</span><a class="add" href="#">Inscribirme</a></div></div>
-      <div class="item"><div class="cover k2"><small>Libro</small><b>El Estado que funciona</b></div><p class="kind">Impreso y digital</p><h3>El Estado que funciona: diez casos de gestión local</h3><div class="row"><span class="price">S/ 65</span><a class="add" href="#">Agregar</a></div></div>
-      <div class="item"><div class="cover k3"><small>Curso corto</small><b>Contrataciones con el Estado</b></div><p class="kind">Curso, 4 semanas</p><h3>Contrataciones con el Estado para proveedores</h3><div class="row"><span class="price">S/ 420</span><a class="add" href="#">Inscribirme</a></div></div>
-      <div class="item"><div class="cover k4"><small>Guía</small><b>Mapas de riesgo</b></div><p class="kind">Guía práctica</p><h3>Mapas de riesgo para equipos directivos</h3><div class="row"><span class="price">S/ 48</span><a class="add" href="#">Agregar</a></div></div>
+    <div class="head"><h2 data-reveal>Cómo trabajamos, paso a paso</h2><p data-reveal style="--d:.1s">Cada etapa termina con un entregable concreto. Siempre sabes en qué punto está tu proyecto.</p></div>
+    <div class="steps" data-stagger=".12">
+      <div class="step"><span class="n">Paso 1<i></i></span><h3>Diagnóstico</h3><p>Escuchamos a tu equipo, revisamos datos y definimos el problema real.</p></div>
+      <div class="step"><span class="n">Paso 2<i></i></span><h3>Diseño</h3><p>Proponemos la estrategia, los indicadores y la hoja de ruta.</p></div>
+      <div class="step"><span class="n">Paso 3<i></i></span><h3>Implementación</h3><p>Acompañamos la ejecución y formamos a quienes la sostendrán.</p></div>
+      <div class="step"><span class="n">Paso 4<i></i></span><h3>Medición</h3><p>Medimos resultados y dejamos tableros para seguir mejorando.</p></div>
     </div>
   </div>
 </section>
 
-<section class="block" style="padding-top:0">
+<section class="block" id="escuela" style="padding-top:10px">
+  <div class="wrap" data-carousel>
+    <div class="head"><h2 data-reveal>Cursos con inicio próximo</h2>
+      <div class="c-btns" data-reveal style="--d:.1s"><button type="button" data-prev aria-label="Cursos anteriores"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5m5-5-5 5 5 5"/></svg></button><button type="button" data-next aria-label="Más cursos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14m-5-5 5 5-5 5"/></svg></button></div>
+    </div>
+    <div class="carousel">
+      <div class="track" data-stagger=".08">
+        <article class="course"><div class="img"><img src="https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=70" alt="Laptop abierta sobre un escritorio de madera" loading="lazy"><span class="tag live">En vivo</span></div><div class="body"><span class="when">14 de enero, 8 semanas</span><h3>Diplomado en gestión pública por resultados</h3><span class="who">Mg. Lucía Paredes (ejemplo)</span><div class="foot"><span class="price">S/ 890<s>S/ 1 100</s></span><a href="#">Ver curso</a></div></div></article>
+        <article class="course"><div class="img"><img src="https://images.unsplash.com/photo-1583521214690-73421a1829a9?auto=format&fit=crop&w=800&q=70" alt="Pilas de documentos y carpetas" loading="lazy"><span class="tag">Curso corto</span></div><div class="body"><span class="when">3 de febrero, 4 semanas</span><h3>Contrataciones con el Estado para proveedores</h3><span class="who">Abg. Martín Salas (ejemplo)</span><div class="foot"><span class="price">S/ 420</span><a href="#">Ver curso</a></div></div></article>
+        <article class="course"><div class="img"><img src="https://images.unsplash.com/photo-1650201777831-8c5c23a2b41e?auto=format&fit=crop&w=800&q=70" alt="Vista aérea de un río en un valle" loading="lazy"><span class="tag">Diplomado</span></div><div class="body"><span class="when">10 de febrero, 10 semanas</span><h3>Prospectiva y planeamiento estratégico territorial</h3><span class="who">Dr. Andrés Quispe (ejemplo)</span><div class="foot"><span class="price">S/ 950</span><a href="#">Ver curso</a></div></div></article>
+        <article class="course"><div class="img"><img src="https://images.unsplash.com/photo-1620275765334-4ed948bb4502?auto=format&fit=crop&w=800&q=70" alt="Cuaderno abierto con un bolígrafo" loading="lazy"><span class="tag live">En vivo</span></div><div class="body"><span class="when">24 de febrero, 6 semanas</span><h3>Comunicación de gobierno y vocería</h3><span class="who">Lic. Carla Rojas (ejemplo)</span><div class="foot"><span class="price">S/ 560</span><a href="#">Ver curso</a></div></div></article>
+        <article class="course"><div class="img"><img src="https://images.unsplash.com/photo-1503423571797-2d2bb372094a?auto=format&fit=crop&w=800&q=70" alt="Mesa larga de reuniones vacía" loading="lazy"><span class="tag">Curso corto</span></div><div class="body"><span class="when">2 de marzo, 4 semanas</span><h3>Gobierno corporativo para directorios</h3><span class="who">CPC Diego Ramos (ejemplo)</span><div class="foot"><span class="price">S/ 480</span><a href="#">Ver curso</a></div></div></article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block edit-band" id="editorial">
+  <div class="wrap editorial">
+    <figure class="ph" data-reveal="zoom"><img src="https://images.unsplash.com/photo-1709924168698-620ea32c3488?auto=format&fit=crop&w=1000&q=70" alt="Pasillo de una biblioteca con estanterías llenas de libros" loading="lazy"><span class="stamp">Envío a todo el Perú</span></figure>
+    <div>
+      <h2 class="h2" data-reveal>Libros para el trabajo de todos los días</h2>
+      <p style="color:var(--muted);margin-top:16px;max-width:46ch;--d:.1s" data-reveal>Guías prácticas sobre gestión pública, territorio y empresa, escritas por nuestro equipo. En impreso y digital.</p>
+      <div class="books" data-stagger=".1">
+        <div class="book"><div class="cv k1"><small>Kokar Editorial</small><b>El Estado que funciona</b><svg width="110" height="110" viewBox="0 0 110 110" fill="none" stroke="#fff" stroke-width="2"><circle cx="55" cy="55" r="50"/><circle cx="55" cy="55" r="30"/></svg></div><h3>El Estado que funciona: diez casos de gestión local</h3><div class="row"><span>S/ 65</span><button type="button" data-add="El Estado que funciona">Agregar</button></div></div>
+        <div class="book"><div class="cv k2"><small>Kokar Editorial</small><b>Mapas de riesgo</b><svg width="110" height="110" viewBox="0 0 110 110" fill="none" stroke="#9FE2C6" stroke-width="2"><path d="M5 100 55 10l50 90z"/></svg></div><h3>Mapas de riesgo para equipos directivos</h3><div class="row"><span>S/ 48</span><button type="button" data-add="Mapas de riesgo">Agregar</button></div></div>
+        <div class="book"><div class="cv k3"><small>Kokar Editorial</small><b>Territorio y futuro</b><svg width="110" height="110" viewBox="0 0 110 110" fill="none" stroke="#4A2E07" stroke-width="2"><path d="M0 80c30-40 70-40 110 0M0 100c30-40 70-40 110 0"/></svg></div><h3>Territorio y futuro: guía de prospectiva regional</h3><div class="row"><span>S/ 58</span><button type="button" data-add="Territorio y futuro">Agregar</button></div></div>
+      </div>
+      <a class="link" href="#" style="margin-top:30px" data-reveal>Ver toda la librería <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14m-5-5 5 5-5 5"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap testi">
+    <div class="intro" data-reveal>
+      <h2 class="h2" style="font-size:clamp(32px,3.4vw,48px)">Lo que dicen quienes trabajaron con nosotros</h2>
+      <div><div class="score"><b>4,9</b><span>de 5 en la evaluación de cursos 2026 (dato de ejemplo)</span></div><div class="stars" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3 7 7 .6-5.3 4.7 1.6 7.2L12 17.8 5.7 21.5l1.6-7.2L2 9.6 9 9z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3 7 7 .6-5.3 4.7 1.6 7.2L12 17.8 5.7 21.5l1.6-7.2L2 9.6 9 9z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3 7 7 .6-5.3 4.7 1.6 7.2L12 17.8 5.7 21.5l1.6-7.2L2 9.6 9 9z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3 7 7 .6-5.3 4.7 1.6 7.2L12 17.8 5.7 21.5l1.6-7.2L2 9.6 9 9z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3 7 7 .6-5.3 4.7 1.6 7.2L12 17.8 5.7 21.5l1.6-7.2L2 9.6 9 9z"/></svg></div></div>
+    </div>
+    <div class="rot" data-rotator data-reveal style="--d:.1s">
+      <svg width="90" height="72" viewBox="0 0 120 96" fill="#fff" aria-hidden="true"><path d="M0 96V58C0 24 18 4 50 0v18C34 22 26 34 26 50h24v46zm70 0V58c0-34 18-54 50-58v18c-16 4-24 16-24 32h24v46z"/></svg>
+      <div class="quotes">
+        <blockquote class="quote"><p>Pasamos de tener un plan en papel a un tablero que el consejo regional revisa cada mes.</p><footer><span class="av" style="background:#9FE2C6">GP</span><div><b>Gerencia de planeamiento</b><span>Gobierno regional (ejemplo)</span></div></footer></blockquote>
+        <blockquote class="quote"><p>Nos ayudaron a ordenar la relación con tres municipalidades antes de iniciar obra. Ganamos meses de diálogo.</p><footer><span class="av" style="background:#F6D7A8">AR</span><div><b>Asuntos regulatorios</b><span>Empresa de energía (ejemplo)</span></div></footer></blockquote>
+        <blockquote class="quote"><p>El diplomado fue directo a lo que hacemos todos los días. Lo aplicamos en el presupuesto siguiente.</p><footer><span class="av" style="background:#fff">SP</span><div><b>Especialista en presupuesto</b><span>Municipalidad provincial (ejemplo)</span></div></footer></blockquote>
+      </div>
+      <div class="dots" role="group" aria-label="Elegir testimonio"><button type="button" aria-label="Testimonio 1"></button><button type="button" aria-label="Testimonio 2"></button><button type="button" aria-label="Testimonio 3"></button></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="publicaciones" style="padding-top:10px">
   <div class="wrap">
-    <div class="cta"><div><h2>¿Tienes un proyecto en mente?</h2><p>Cuéntanos qué necesitas y te respondemos en un día hábil.</p></div><div class="ctas"><a class="btn btn-primary" href="#">Escríbenos</a><a class="btn btn-ghost" href="#">Descargar brochure</a></div></div>
+    <div class="head"><h2 data-reveal>Publicaciones recientes</h2><a class="link" href="#" data-reveal>Ir al blog <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14m-5-5 5 5-5 5"/></svg></a></div>
+    <div class="posts" data-stagger=".1">
+      <a class="post" href="#"><div class="img"><img src="https://images.unsplash.com/photo-1769358730767-ea63216351b7?auto=format&fit=crop&w=900&q=70" alt="Plaza de armas de Cusco con la catedral y montañas" loading="lazy"></div><div class="meta"><b>Gestión regional</b><span>12 nov 2026</span><span>6 min</span></div><h3>Cinco lecciones de los planes regionales que sí se cumplieron</h3></a>
+      <a class="post" href="#"><div class="img"><img src="https://images.unsplash.com/photo-1621831337128-35676ca30868?auto=format&fit=crop&w=900&q=70" alt="Edificio con fachada de vidrio azul y blanco" loading="lazy"></div><div class="meta"><b>Empresas</b><span>5 nov 2026</span><span>4 min</span></div><h3>Qué mira un directorio antes de licitar con el Estado</h3></a>
+      <a class="post" href="#"><div class="img"><img src="https://images.unsplash.com/photo-1777198498604-a924324d1eb2?auto=format&fit=crop&w=900&q=70" alt="Ciudad costera sobre acantilados frente al océano" loading="lazy"></div><div class="meta"><b>Prospectiva</b><span>28 oct 2026</span><span>8 min</span></div><h3>La costa en 2040: tres escenarios para planificar hoy</h3></a>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="contacto" style="padding-top:10px;padding-bottom:0">
+  <div class="wrap cta">
+    <div class="box" data-reveal>
+      <h2>¿Tienes un proyecto en mente?</h2>
+      <p>Cuéntanos qué necesitas y te respondemos en un día hábil con una propuesta de primera reunión, sin costo.</p>
+      <div class="ctas"><a class="btn btn-primary" href="#"><span>Escríbenos</span><span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14m-5-5 5 5-5 5"/></svg></span></a><a class="btn btn-ghost" href="#"><span>Descargar brochure</span></a></div>
+      <form class="news" onsubmit="event.preventDefault();this.querySelector('button').textContent='Suscripción lista'">
+        <label class="sr" for="nl">Tu correo</label><input id="nl" type="email" placeholder="Tu correo para el boletín mensual" required><button type="submit">Suscribirme</button>
+      </form>
+    </div>
+    <figure class="side" data-reveal="zoom" style="--d:.15s"><img src="https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&w=900&q=70" alt="Sala de reuniones con mesa ovalada de madera" loading="lazy" data-parallax=".05"><div class="card-mini"><span class="pulse" aria-hidden="true"></span><div><b>Equipo disponible hoy</b><span>Lun a vie, 9:00 a 18:00</span></div></div></figure>
   </div>
 </section>
 </main>
 
-<footer><div class="wrap"><p>Kokar Consultoría, Escuela y Editorial. Lima, Perú.</p><p class="mock-note">Mockup de propuesta. Textos e imágenes de ejemplo.</p></div></footer>
+<footer class="site">
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <a class="brand" href="#"><svg width="32" height="32" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#1D4A40"/><circle cx="10" cy="10" r="3" fill="#9FE2C6"/><circle cx="20" cy="10" r="3" fill="#fff"/><circle cx="10" cy="20" r="3" fill="#fff"/><circle cx="20" cy="20" r="3" fill="#2F5BFF"/></svg>kokar</a>
+        <p style="margin-top:16px;max-width:32ch">Consultoría, escuela y editorial para quienes gestionan lo público y lo privado.</p>
+        <div class="social">
+          <a href="#" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3zm7 0h3.8v1.7h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21h-4z"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M14 8V6c0-.9.6-1 1-1h3V1h-4c-4 0-5 3-5 5v2H6v4h3v11h5V12h3.5l.5-4z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .6 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .4-4.8 31 31 0 0 0-.4-4.8ZM9.8 15.1V8.9l5.8 3.1z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+        </div>
+      </div>
+      <div><h4>Consultoría</h4><ul><li><a href="#consultoria">Entidades públicas</a></li><li><a href="#consultoria">Empresas privadas</a></li><li><a href="#">Metodología</a></li><li><a href="#">Casos</a></li></ul></div>
+      <div><h4>Escuela</h4><ul><li><a href="#escuela">Diplomados</a></li><li><a href="#escuela">Cursos cortos</a></li><li><a href="#">Programas in house</a></li><li><a href="#">Campus virtual</a></li></ul></div>
+      <div><h4>Editorial</h4><ul><li><a href="#editorial">Librería</a></li><li><a href="#editorial">Novedades</a></li><li><a href="#">Ebooks</a></li><li><a href="#publicaciones">Publicaciones</a></li></ul></div>
+      <div><h4>Contacto</h4><ul><li>Av. Ejemplo 123, Miraflores, Lima</li><li><a href="#">+51 900 000 000</a></li><li><a href="#">hola@kokar.pe</a></li><li>Lun a vie, 9:00 a 18:00</li></ul></div>
+    </div>
+    <div class="legal"><span>© 2026 Kokar. Todos los derechos reservados.</span><span><a href="#">Política de privacidad</a><a href="#">Términos y condiciones</a><a href="#">Libro de reclamaciones</a></span></div>
+    <p class="mock-note">Mockup de propuesta. Textos e imágenes de ejemplo.</p>
+  </div>
+</footer>
 
-<a class="wa" href="#" aria-label="Escríbenos por WhatsApp"><svg width="26" height="26" viewBox="0 0 24 24" fill="#073B1E"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm4.5 12.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.4-.3Z"/></svg><span>WhatsApp</span></a>
+<a class="wa" href="#" aria-label="Escríbenos por WhatsApp"><span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="#073B1E"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm4.5 12.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.4-.3Z"/></svg></span><span>Escríbenos</span></a>
 
+<script src="../shared/motion.js"></script>
 <script>
-// Fondo animado: matriz de puntos; una onda lenta enciende nodos y los conecta (red público–privado)
-(()=>{
-  const c=document.getElementById('field'),x=c.getContext('2d');
-  const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let w,h,pts=[],nodes=[];const G=22;
+// El header flota bajo la franja de propuesta y sube al hacer scroll
+(()=>{const t=document.querySelector('.top'),b=document.body.firstElementChild;const f=()=>{t.style.top=Math.max(0,b.offsetHeight-scrollY)+'px'};addEventListener('scroll',f,{passive:true});addEventListener('resize',f);f()})();
+
+// Red de puntos: una onda enciende la malla y los nodos se conectan; reacciona al cursor
+function network(c,o){
+  const x=c.getContext('2d'),still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let w,h,pts=[],nodes=[],mx=-999,my=-999,vis=true;const G=o.grid||22;
   function size(){
     const d=Math.min(devicePixelRatio||1,2);w=c.clientWidth;h=c.clientHeight;c.width=w*d;c.height=h*d;x.setTransform(d,0,0,d,0,0);
     pts=[];for(let y=G;y<h;y+=G)for(let i=G;i<w;i+=G)pts.push([i,y]);
-    let s=7;const r=()=>(s=(s*9301+49297)%233280)/233280;
-    nodes=Array.from({length:9},()=>pts[Math.floor(r()*pts.length)]);
+    let s=11;const r=()=>(s=(s*9301+49297)%233280)/233280;
+    nodes=Array.from({length:o.nodes||12},(_,k)=>({p:pts[Math.floor(r()*pts.length)],pub:k%2===0}));
   }
+  c.addEventListener('pointermove',e=>{const b=c.getBoundingClientRect();mx=e.clientX-b.left;my=e.clientY-b.top});
+  c.addEventListener('pointerleave',()=>{mx=my=-999});
+  new IntersectionObserver(([e])=>{vis=e.isIntersecting}).observe(c);
   function draw(t){
+    if(!still)requestAnimationFrame(draw);
+    if(!vis&&!still)return;
     x.clearRect(0,0,w,h);const T=t*.0006;
     for(const [px,py] of pts){
-      const v=Math.sin(px*.012+T)*Math.cos(py*.016-T*.7);
-      const a=.12+Math.max(0,v)*.5;
-      x.fillStyle=`rgba(159,226,198,${a})`;
-      x.beginPath();x.arc(px,py,1.2+Math.max(0,v)*1.6,0,7);x.fill();
+      let v=Math.sin(px*.012+T)*Math.cos(py*.016-T*.7);
+      const dm=Math.hypot(px-mx,py-my);if(dm<120)v=Math.max(v,1-dm/120);
+      const a=o.base+Math.max(0,v)*.5;
+      x.fillStyle=`rgba(159,226,198,${a})`;x.beginPath();x.arc(px,py,1.1+Math.max(0,v)*1.8,0,7);x.fill();
     }
-    x.lineWidth=1;
     for(let i=0;i<nodes.length;i++){
-      const n=nodes[i],m=nodes[(i+3)%nodes.length];
-      const p=(Math.sin(T*1.3+i)+1)/2;
-      x.strokeStyle=`rgba(47,91,255,${.25+p*.5})`;
-      x.beginPath();x.moveTo(n[0],n[1]);x.lineTo(n[0]+(m[0]-n[0])*p,n[1]+(m[1]-n[1])*p);x.stroke();
-      x.fillStyle=i%3?'#9FE2C6':'#2F5BFF';
-      x.beginPath();x.arc(n[0],n[1],4.5,0,7);x.fill();
+      const n=nodes[i].p,m=nodes[(i+5)%nodes.length].p,p=(Math.sin(T*1.2+i*.9)+1)/2;
+      const g=x.createLinearGradient(n[0],n[1],m[0],m[1]);g.addColorStop(0,'rgba(47,91,255,.9)');g.addColorStop(1,'rgba(159,226,198,.9)');
+      x.strokeStyle=g;x.globalAlpha=.25+p*.55;x.lineWidth=1.4;
+      x.beginPath();x.moveTo(n[0],n[1]);x.lineTo(n[0]+(m[0]-n[0])*p,n[1]+(m[1]-n[1])*p);x.stroke();x.globalAlpha=1;
     }
-    if(!still)requestAnimationFrame(draw);
+    for(const nd of nodes){
+      const [nx,ny]=nd.p,pulse=still?0:(Math.sin(T*3+nx)+1)*2.5;
+      x.fillStyle=nd.pub?'rgba(47,91,255,.25)':'rgba(159,226,198,.25)';x.beginPath();x.arc(nx,ny,6+pulse,0,7);x.fill();
+      x.fillStyle=nd.pub?'#2F5BFF':'#9FE2C6';x.beginPath();x.arc(nx,ny,4.5,0,7);x.fill();
+    }
   }
   size();addEventListener('resize',size);requestAnimationFrame(draw);
-})();
+}
+network(document.getElementById('field'),{base:.12,nodes:12});
+network(document.getElementById('field2'),{base:.06,nodes:8,grid:26});
 </script>
 </body>
 </html>
