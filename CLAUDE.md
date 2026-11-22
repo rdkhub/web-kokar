@@ -16,7 +16,8 @@ Mockup navegable de la web de **Kokar** (nombre provisional, el brief decía «[
 - HTML/CSS/JS estático, sin build. Cada página es autocontenida.
 - `capturas/`: capturas usadas como miniaturas en la página selectora.
 - `tools/serve.mjs`: servidor local (`node tools/serve.mjs 5180`), también en `.claude/launch.json`.
-- Deploy: Vercel, proyecto `web-kokar`, despliega al hacer push a `main`. `.vercelignore` deja fuera `tools/`, `.claude/` y los .md.
+- Deploy actual: **GitHub Pages** desde `main` (raíz), link https://rdkhub.github.io/web-kokar/ . Se actualiza solo con cada push a `main`. El repo quedó **público** para poder usar Pages con cuenta gratuita.
+- Vercel quedó pendiente: crear el proyecto exige un código por correo que no llega (cuenta de Vercel con correo oculto de Apple). `.vercelignore` ya está listo para cuando se resuelva.
 
 ## Páginas previstas para la fase 2
 Inicio, Nosotros, Consultoría (general + detalle público/privado), Escuela (catálogo con filtros, ficha de curso, login de campus de maqueta), Librería (catálogo, ficha, carrito de maqueta), Publicaciones (listado + artículo), Contacto. En todas: menú con buscador y carrito, footer completo, WhatsApp flotante, responsive, y en el footer «Mockup de propuesta. Textos e imágenes de ejemplo».
